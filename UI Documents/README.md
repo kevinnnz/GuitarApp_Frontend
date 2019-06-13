@@ -6,6 +6,6 @@ The GuitarApp Front-End documents were created with Figma. In the Version 0.0.1 
 ## Design Resources
 Each component was designed with modularity in mind and all future designers should keep that in mind when desiging these apps. 
 
-⋅⋅* [Atomic Design](http://bradfrost.com/blog/post/atomic-web-design/) 
-⋅⋅* [Desiging and Building for Systems by Dan Eden](https://daneden.me/2019/03/29/designing-for-systems/)
+* [Atomic Design](http://bradfrost.com/blog/post/atomic-web-design/) 
+* [Desiging and Building for Systems by Dan Eden](https://daneden.me/2019/03/29/designing-for-systems/)
 

@@ -1,0 +1,26 @@
+[
+    {
+        "Id":2,
+        "GuitarMake":"Squire",
+        "GuitarModel":"Telecaster",
+        "GuitarSerial":"JV46828",
+        "GuitarColour":"Buttersotch Blonde",
+        "PurchaseDate":"2017-11-18T00:00:00.000Z",
+        "PurchasePrice":500,
+        "SoldDate":null,
+        "SoldPrice":null,
+        "UserId":"73sqPmdkn4RZTsISUYmRDfk7kGj2"
+    },
+    {
+        "Id":3,
+        "GuitarMake":"Simon & Patrick",
+        "GuitarModel":"Trek Folk SG",
+        "GuitarSerial":"038961000213",
+        "GuitarColour":"Natural",
+        "PurchaseDate":"2014-12-26T00:00:00.000Z",
+        "PurchasePrice":300,
+        "SoldDate":null,
+        "SoldPrice":null,
+        "UserId":"73sqPmdkn4RZTsISUYmRDfk7kGj2"
+    }
+]

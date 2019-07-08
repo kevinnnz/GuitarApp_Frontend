@@ -1,6 +1,5 @@
 import React from "react";
-import "./GuitarCard.css";
-const ApiGateway = "http://dev.kevinzaworski.com/api/guitars/73sqPmdkn4RZTsISUYmRDfk7kGj2";
+const ApiGateway = "http://dev.kevinzaworski.com/api/guitars/dummyuser";
 
 export default class GuitarCard extends React.Component {
     constructor() { 
@@ -15,14 +14,24 @@ export default class GuitarCard extends React.Component {
     componentDidMount() {
         // functions to call after the intial rendering
         this.fetchUsersGuitars();
+        setInterval(this.fetchUsersGuitars, 30000);
     }
 
-    fetchUsersGuitars() {
-        fetch(ApiGateway).then(res => res.json())
-        .then((data) => {
-            this.setState({ 
+    fetchUsersGuitars = () => {
+        fetch(ApiGateway).then((res) => { 
+            if(res.status === 200) {
+                return res.json();
+            } 
+
+            if( res.status === 404) {
+                return res.json();
+            }
+
+            throw new Error('Something went wrong. Please try again shortly.');
+         }).then((data) => {
+            this.setState({
                 guitars: data,
-                loading: false
+                loading: false,
             })
         }).catch(err => {
             this.setState({ 
@@ -38,7 +47,20 @@ export default class GuitarCard extends React.Component {
         }
         
         if( this.state.err ) {
-            return( <HasErrors err = { this.state.err } /> );
+            if( this.state.err && this.state.guitars.length ){
+                return (
+                    <div>               
+                        { this.state.guitars.map(guitar => (
+                            <div className="card" key={guitar.Id}>
+                                <h2 className="guitarTitle"> { guitar.GuitarColour + ' ' + guitar.GuitarModel } </h2> 
+                                <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
+                                <Playbility GuitarId = { guitar.Id }/>
+                            </div>
+                        ))} 
+                    </div>
+                );
+            }
+            return( <div className="card"><HasErrors err = { this.state.err } /></div> );
         }
 
         if( !this.state.guitars[0].Id && !this.state.err ) {
@@ -64,20 +86,39 @@ class Playbility extends React.Component {
         super();
         this.state = {
             service: [],
+            loading: true,
             err: null
         }
     } 
 
     componentDidMount() {
-        fetch("http://dev.kevinzaworski.com/api/service/" + this.props.GuitarId + "/last").then(res => res.json())
+        this.fetchServiceRecords();
+        setInterval(this.fetchServiceRecords, 30000)
+    }
+
+    fetchServiceRecords = () => {
+        fetch("http://dev.kevinzaworski.com/api/service/" + this.props.GuitarId + "/last").then((res) => {
+            if(res.status === 200) {
+                return res.json();
+            } else if(res.status === 404 ) {
+                return res.json();
+            }
+            throw new Error('Something went wrong. Please try again shortly.');
+        })
         .then((data) => {
-            this.setState({ service: data })
+            this.setState({ 
+                service: data,
+                loading: false
+            })
         }).catch(err => {
-            this.setState({ err: err });
+            this.setState({ 
+                err: err,
+                loading: false
+            });
         });
     }
 
-    calculateGuitarHealth(date) {
+    calculateGuitarHealth = (date) => {
         // calculates the health of the guitar by subtracting todays date
         // with the last time the guitar got a setup. Generally a guitar
         // needs an setup every 6 - 12 months.
@@ -88,7 +129,7 @@ class Playbility extends React.Component {
         return(this.chartTheGuitarHealth(diff));
     }
 
-    chartTheGuitarHealth(diff) {
+    chartTheGuitarHealth = (diff) => {
         if(diff >= 365 && diff <= 273 ) {
             return( <p className="playability green">Great!</p> );
         } else if( diff >= 273 && diff <= 182 ) {
@@ -102,7 +143,7 @@ class Playbility extends React.Component {
         }
     }
 
-    yyyymmdd() {
+    yyyymmdd = () => {
         var x = new Date();
         var y = x.getFullYear().toString();
         var m = (x.getMonth() + 1).toString();
@@ -112,12 +153,22 @@ class Playbility extends React.Component {
         var yyyymmdd = y +  m + d;
         return yyyymmdd;
     }
-    
 
     render() {
+        if( this.state.loading ){
+            return(<div></div>);
+        }
+
+        if( this.state.service === "Sorry, we cannot find that!" ) {
+            return( <NoServiceRecordsFound /> );
+        } else if( this.state.err) {
+            return( <HasErrors err = {this.state.err} />)
+        }
+
         return(
             <div>
                 <h3 className="center">Playbility</h3>
+                { }
                 { this.calculateGuitarHealth(this.state.service.map(servicerecord => (
                         servicerecord.GuitarSetupDate.split('T')[0]))) }
             </div> 
@@ -125,11 +176,15 @@ class Playbility extends React.Component {
     }   
 }
 
+const NoServiceRecordsFound = () => {
+    return (
+        <p>Please add a service record to check the health of the guitar..</p>
+    );
+}
+
 const HasErrors = (props) => {
     return (
-        <div className="card">
-            <h2 className="guitarTitle"> { props.err.toString() } </h2> 
-        </div>
+        <h2 className="guitarTitle"> { props.err.toString() } </h2> 
     );
 }
 

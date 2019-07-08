@@ -12,3 +12,96 @@ h3 {
     line-height: 21px;
     
 }
+
+input {
+    width: 100%;
+    font-size: 18px;
+    margin-top: 10px; 
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+}
+
+button {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 25%;
+    height: 50px;
+
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+
+    background: #284DD3;
+    border-color: #17359E;
+    border-width: 0.25px;
+    color: white;
+}
+
+.centerButton {
+    display: flex; 
+    justify-content: center
+}
+
+.formError {
+    font-weight: 400;
+    color: #CE6767;
+}
+
+.card {
+    background: #FDFDFD;
+    border: 1px solid #DEDEDE;
+    margin-top: 10px; 
+    margin-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.guitarTitle {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 28px;
+    text-align: center;
+    color: #284DD3; 
+}
+
+.guitarDetails {
+    margin-top: -15px;
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 21px;
+    /* identical to box height */
+    text-align: center;
+    color: #474747;
+}
+
+.sectionHeading { 
+    text-align: center;
+}
+
+.playability {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.green {
+    color: #89C87A;
+}
+
+.yellow {
+    color: #DDD407;
+}
+
+.red {
+    color: #CE6767;
+}
+
+.center {
+    text-align: center;
+}

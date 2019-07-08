@@ -1,0 +1,3 @@
+
+
+// a compononent to veiw the details of a guitar...

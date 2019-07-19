@@ -81,7 +81,7 @@ export default class ServiceForm extends React.Component {
                 console.log(res);
             });
 
-            // window.location.replace('/');
+            window.location.replace('/');
         }
     }
 

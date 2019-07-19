@@ -77,7 +77,7 @@ export default class GuitarForm extends React.Component {
             var json = JSON.stringify(guitar);
             console.log(json);
             // do something..
-            fetch("http://dev.kevinzaworski.com/api/Guitars/", {
+            fetch("http://dev.kevinzaworski.com:8080/api/guitars/", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -88,7 +88,7 @@ export default class GuitarForm extends React.Component {
                 console.log(res);
             });
 
-            window.location.replace('/');
+            //window.location.replace('/');
         }
     }
 

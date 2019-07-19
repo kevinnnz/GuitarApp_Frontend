@@ -39,6 +39,10 @@
     text-align: center;
 }
 
+.playabilityDiv{
+    margin-bottom: 10px;
+}
+
 .green {
     color: #89C87A;
 }

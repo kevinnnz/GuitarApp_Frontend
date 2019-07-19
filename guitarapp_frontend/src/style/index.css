@@ -105,3 +105,54 @@ button {
 .center {
     text-align: center;
 }
+
+nav {
+    background-color:#284DD3;
+    border-bottom: 0.5px;
+    border-bottom-color: rgba(221, 221, 221, 1);
+    border-bottom-style: solid;
+    height: 75px;
+    margin-top: -20px;
+}
+
+.header {
+    background-color: white;
+    height: 100%;
+}
+
+.navLink {
+    font-size: 24px;
+    line-height: 75px;
+    width: 71px;
+    margin: 15px;
+    height: 75px;
+    color: white;
+}
+
+.navLink a:visited {
+    color: white;
+}
+
+.navLink a {
+    color: white;
+}
+
+
+.navLinkList li {
+    display: inline;
+}
+
+.serviceHistory {
+    background: rgba(40, 77, 211, 0);
+    border: 1px solid #DFE1E5;
+    margin-bottom: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px; 
+    padding-bottom: 5px;
+}
+
+.break {
+    width: 100%;
+    border: 1px solid #DFE1E5;
+}

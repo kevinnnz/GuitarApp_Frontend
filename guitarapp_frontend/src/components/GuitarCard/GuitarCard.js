@@ -1,7 +1,14 @@
 import React from "react";
-const ApiGateway = "http://dev.kevinzaworski.com/api/guitars/dummyuser";
+import { Link } from "react-router-dom";
+import { HasErrors, NoGuitarsFound, NoServiceRecordsFound, Loading } from '../Common/Common';
 
-export default class GuitarCard extends React.Component {
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+
+const ApiGateway = "http://dev.kevinzaworski.com:8080/api/Guitars/dummyuser ";
+
+// 1.1 GUITAR CARD
+export class GuitarCard extends React.Component {
     constructor() { 
         super();
         this.state = {
@@ -52,9 +59,9 @@ export default class GuitarCard extends React.Component {
                     <div>               
                         { this.state.guitars.map(guitar => (
                             <div className="card" key={guitar.Id}>
-                                <h2 className="guitarTitle"> { guitar.GuitarColour + ' ' + guitar.GuitarModel } </h2> 
+                                <h2 className="guitarTitle"><Link to={`/guitar/${guitar.Id}`} guitar={guitar}> { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link></h2>
                                 <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
-                                <Playbility GuitarId = { guitar.Id }/>
+                                <Playability GuitarId = { guitar.Id }/>
                             </div>
                         ))} 
                     </div>
@@ -71,9 +78,9 @@ export default class GuitarCard extends React.Component {
             <div>               
                 { this.state.guitars.map(guitar => (
                     <div className="card" key={guitar.Id}>
-                        <h2 className="guitarTitle"> { guitar.GuitarColour + ' ' + guitar.GuitarModel } </h2> 
+                        <h2 className="guitarTitle"> <Link to={{ pathname: `/guitar/${guitar.Id}`, state : { guitar : guitar }}} > { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link> </h2> 
                         <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
-                        <Playbility GuitarId = { guitar.Id }/>
+                        <Playability GuitarId = { guitar.Id }/>
                     </div>
                 ))} 
             </div>
@@ -81,7 +88,7 @@ export default class GuitarCard extends React.Component {
     }
 }
 
-class Playbility extends React.Component {
+export class Playability extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -93,11 +100,10 @@ class Playbility extends React.Component {
 
     componentDidMount() {
         this.fetchServiceRecords();
-        setInterval(this.fetchServiceRecords, 30000)
     }
 
     fetchServiceRecords = () => {
-        fetch("http://dev.kevinzaworski.com/api/service/" + this.props.GuitarId + "/last").then((res) => {
+        fetch("http://dev.kevinzaworski.com:8080/api/service/" + this.props.GuitarId + "/last").then((res) => {
             if(res.status === 200) {
                 return res.json();
             } else if(res.status === 404 ) {
@@ -118,40 +124,127 @@ class Playbility extends React.Component {
         });
     }
 
-    calculateGuitarHealth = (date) => {
-        // calculates the health of the guitar by subtracting todays date
-        // with the last time the guitar got a setup. Generally a guitar
-        // needs an setup every 6 - 12 months.
-        let todayDate = this.yyyymmdd();
-        let lastSetupDate = date.toString().replace(/-/g, "");
-        let diff = lastSetupDate - todayDate;
+    returnGuitarProgressBar = (date) => {
+        // calculates the health of the guitar by subtracting todays date with last setup date
+        // divide the result by 360 and multiple by 100 to get the percentage
+        // generally speaking guitars need to be readjusted every year. 
+        let todayDate = new Date();
 
-        return(this.chartTheGuitarHealth(diff));
-    }
+        let lastSetupDate = date.toString().split("-");
+        let lastSetupJsDate = new Date(lastSetupDate[0], lastSetupDate[1] - 1, lastSetupDate[2].substr(0,2));
 
-    chartTheGuitarHealth = (diff) => {
-        if(diff >= 365 && diff <= 273 ) {
-            return( <p className="playability green">Great!</p> );
-        } else if( diff >= 273 && diff <= 182 ) {
-            return( <p className="playability green">Good</p> );
-        } else if ( diff >= 91 && diff <= 181 ) {
-            return( <p className="playability yellow">Okay</p> );
-        } else if ( diff >= 0 && diff <= 90 ) {
-            return( <p className="playability red">Needs an adjustment</p> );
+        let today = Date.UTC(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+        let setup = Date.UTC(lastSetupJsDate.getFullYear(), lastSetupJsDate.getMonth(), lastSetupJsDate.getDate());
+        let percentage = 0;
+
+        if(today === setup ) {
+            percentage = 100;
         } else {
-            return( <p className="playability red">Critical! Take guitar in for service!</p> );
+            let diff = Math.floor((today - setup) / (1000 * 60 * 60 * 24));
+            percentage = Math.round((diff / 360) * 100);
         }
-    }
 
-    yyyymmdd = () => {
-        var x = new Date();
-        var y = x.getFullYear().toString();
-        var m = (x.getMonth() + 1).toString();
-        var d = x.getDate().toString();
-        (d.length === 1) && (d = '0' + d);
-        (m.length === 1) && (m = '0' + m);
-        var yyyymmdd = y +  m + d;
-        return yyyymmdd;
+        if ( percentage <= 0 ) {
+            percentage = 0;
+            return (
+                <CircularProgressbar 
+                    counterClockwise="true"
+                    value={percentage} 
+                    text={`${percentage}%`}
+                    styles={{ 
+                        root: {
+                            width: "126px",
+                            height: "126px",
+                            display: "block",
+                            margin: "auto",
+                            bottom: "15px"
+                        },
+                        path: {
+                            stroke: "#E85A5A"
+                        },
+                        text: {
+                            fill: "#E85A5A"
+                        }
+                    }}
+                />
+            );
+        }
+
+        if( percentage >= 61 && percentage <= 100 ) {
+            return (
+                <CircularProgressbar 
+                    counterClockwise="true"
+                    value={percentage} 
+                    text={`${percentage}%`}
+                    styles={{ 
+                        root: {
+                            width: "126px",
+                            height: "126px",
+                            display: "block",
+                            margin: "auto",
+                            bottom: "15px"
+                        },
+                        path: {
+                            stroke: "#89C87A"
+                        },
+                        text: {
+                            fill: "#89C87A"
+                        }
+                    }}
+                />
+            );
+        }
+
+        if( percentage >= 36 && percentage <= 61 ) {
+            return (
+                <CircularProgressbar 
+                    counterClockwise="true"
+                    value={percentage} 
+                    text={`${percentage}%`}
+                    styles={{ 
+                        root: {
+                            width: "126px",
+                            height: "126px",
+                            display: "block",
+                            margin: "auto",
+                            bottom: "15px"
+                        },
+                        path: {
+                            stroke: "#FEC73B"
+                        },
+                        text: {
+                            fill: "#FEC73B"
+                        }
+                    }}
+                />
+            );
+        }
+
+        if( percentage >= 1 && percentage <= 35 ) {
+            return (
+                <CircularProgressbar 
+                    counterClockwise="true"
+                    value={percentage} 
+                    text={`${percentage}%`}
+                    styles={{ 
+                        root: {
+                            width: "126px",
+                            height: "126px",
+                            display: "block",
+                            margin: "auto",
+                            bottom: "15px"
+                        },
+                        path: {
+                            stroke: "#E85A5A"
+                        },
+                        text: {
+                            fill: "#E85A5A"
+                        }
+                    }}
+                />
+            );
+        }
+        
     }
 
     render() {
@@ -161,47 +254,21 @@ class Playbility extends React.Component {
 
         if( this.state.service === "Sorry, we cannot find that!" ) {
             return( <NoServiceRecordsFound /> );
-        } else if( this.state.err) {
+        } else if( this.state.err && !this.state.service[0]) {
             return( <HasErrors err = {this.state.err} />)
         }
 
         return(
-            <div>
-                <h3 className="center">Playbility</h3>
-                { }
-                { this.calculateGuitarHealth(this.state.service.map(servicerecord => (
+            <div style={{
+                marginBottom: "15px"
+            }}>
+                <h3 className="center">Playability</h3>
+                    { this.returnGuitarProgressBar(this.state.service.map(servicerecord => (
                         servicerecord.GuitarSetupDate.split('T')[0]))) }
             </div> 
         );
     }   
 }
 
-const NoServiceRecordsFound = () => {
-    return (
-        <p>Please add a service record to check the health of the guitar..</p>
-    );
-}
 
-const HasErrors = (props) => {
-    return (
-        <h2 className="guitarTitle"> { props.err.toString() } </h2> 
-    );
-}
-
-const Loading = () => {
-    return(
-        <div className="card">
-            <h2 className="guitarTitle">loading...</h2> 
-        </div> 
-    );
-}
-
-const NoGuitarsFound = () => {
-    return(
-        <div className="card">
-            <h2 className="guitarTitle">No guitars yet...</h2> 
-        </div> 
-    );
-}
-
-
+export default GuitarCard;

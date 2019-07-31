@@ -140,10 +140,12 @@ export class Playability extends React.Component {
         if(today === setup ) {
             percentage = 100;
         } else {
+            // why does this work?
             let diff = Math.floor((today - setup) / (1000 * 60 * 60 * 24));
+            diff = 360 - diff;
             percentage = Math.round((diff / 360) * 100);
         }
-
+        
         if ( percentage <= 0 ) {
             percentage = 0;
             return (

@@ -1,6 +1,8 @@
 import React from "react";
 import moment from "moment"; 
 
+
+
 const initalState = {
     TechName: "",
     TechCompany: "",
@@ -95,6 +97,7 @@ export default class ServiceForm extends React.Component {
             <h2 className="center">Add new Service Record</h2> 
             <form onSubmit={this.handleSubmit}>
                 <div className="formError"><p>{this.state.TechError}</p></div>
+
                 <input 
                     name = "TechName"
                     placeholder="Tech Name" 

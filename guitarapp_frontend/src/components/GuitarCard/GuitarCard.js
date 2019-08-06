@@ -19,9 +19,12 @@ export class GuitarCard extends React.Component {
     }
 
     componentDidMount() {
-        // functions to call after the intial rendering
         this.fetchUsersGuitars();
-        setInterval(this.fetchUsersGuitars, 30000);
+        this.interval = setInterval(this.fetchUsersGuitars, 30000);
+    }
+
+    componentWillUnmount() { 
+        clearInterval(this.interval);
     }
 
     fetchUsersGuitars = () => {
@@ -145,7 +148,7 @@ export class Playability extends React.Component {
             diff = 360 - diff;
             percentage = Math.round((diff / 360) * 100);
         }
-        
+
         if ( percentage <= 0 ) {
             percentage = 0;
             return (

@@ -23,7 +23,7 @@ export default class GuitarDetails extends React.Component {
     }
 
     fetchServiceRecords = () => {
-        fetch(`http://dev.kevinzaworski.com:8080/api/service/${this.state.id}/all`).then((res) => {
+        fetch(`https://dev.kevinzaworski.com/api/service/${this.state.id}/all`).then((res) => {
             if(res.status === 200) {
                 return res.json();
             } 

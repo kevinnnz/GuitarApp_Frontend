@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Layout from './components/Layout';
 import * as serviceWorker from './serviceWorker';
 import "./style/index.css"
+import "./style/structure.css"
 
 ReactDOM.render(<Layout />, document.getElementById('root'));
 

@@ -1,8 +1,6 @@
 import React from "react";
 import moment from "moment"; 
 
-
-
 const initalState = {
     TechName: "",
     TechCompany: "",
@@ -72,7 +70,7 @@ export default class ServiceForm extends React.Component {
             }
             var json = JSON.stringify(serviceRecord);
             // do something..
-            fetch("http://dev.kevinzaworski.com:8080/api/service/", {
+            fetch("https://dev.kevinzaworski.com/api/service/", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -83,7 +81,7 @@ export default class ServiceForm extends React.Component {
                 console.log(res);
             });
 
-            window.location.replace('/');
+           // window.location.replace('/');
         }
     }
 

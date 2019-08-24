@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { HasErrors, NoGuitarsFound, NoServiceRecordsFound, Loading } from '../Common/Common';
+import { HasErrors, NoGuitarsFound, Loading } from '../Common/Common';
 
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-const ApiGateway = "http://dev.kevinzaworski.com:8080/api/Guitars/dummyuser ";
+const ApiGateway = "https://dev.kevinzaworski.com/api/Guitars/dummyuser ";
 
 // 1.1 GUITAR CARD
 export class GuitarCard extends React.Component {
@@ -61,7 +61,7 @@ export class GuitarCard extends React.Component {
                 return (
                     <div>               
                         { this.state.guitars.map(guitar => (
-                            <div className="card" key={guitar.Id}>
+                            <div className="card col-sm" key={guitar.Id}>
                                 <h2 className="guitarTitle"><Link to={`/guitar/${guitar.Id}`} guitar={guitar}> { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link></h2>
                                 <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
                                 <Playability GuitarId = { guitar.Id }/>
@@ -77,16 +77,14 @@ export class GuitarCard extends React.Component {
             return( <NoGuitarsFound /> );
         }
 
-        return (
-            <div>               
-                { this.state.guitars.map(guitar => (
-                    <div className="card" key={guitar.Id}>
-                        <h2 className="guitarTitle"> <Link to={{ pathname: `/guitar/${guitar.Id}`, state : { guitar : guitar }}} > { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link> </h2> 
-                        <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
-                        <Playability GuitarId = { guitar.Id }/>
-                    </div>
-                ))} 
-            </div>
+        return (              
+            this.state.guitars.map(guitar => (
+                <div className="card col-sm-3" key={guitar.Id}>
+                    <h2 className="guitarTitle"> <Link to={{ pathname: `/guitar/${guitar.Id}`, state : { guitar : guitar }}} > { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link> </h2> 
+                    <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
+                    <Playability GuitarId = { guitar.Id }/>
+                </div>
+            ))
         );
     }
 }
@@ -106,7 +104,7 @@ export class Playability extends React.Component {
     }
 
     fetchServiceRecords = () => {
-        fetch("http://dev.kevinzaworski.com:8080/api/service/" + this.props.GuitarId + "/last").then((res) => {
+        fetch("https://dev.kevinzaworski.com/api/service/" + this.props.GuitarId + "/last").then((res) => {
             if(res.status === 200) {
                 return res.json();
             } else if(res.status === 404 ) {
@@ -258,7 +256,32 @@ export class Playability extends React.Component {
         }
 
         if( this.state.service === "Sorry, we cannot find that!" ) {
-            return( <NoServiceRecordsFound /> );
+            return(
+                <div style={{
+                    marginBottom: "15px"
+                }}>
+                    <h3 className="center">Playability</h3>
+                    <CircularProgressbar 
+                        counterClockwise="true"
+                        text="N/A"
+                        styles={{ 
+                            root: {
+                                width: "126px",
+                                height: "126px",
+                                display: "block",
+                                margin: "auto",
+                                bottom: "15px"
+                            },
+                            path: {
+                                stroke: "#D7D7D7"
+                            },
+                            text: {
+                                fill: "#D7D7D7"
+                            }
+                        }}
+                    />
+                </div>
+            )
         } else if( this.state.err && !this.state.service[0]) {
             return( <HasErrors err = {this.state.err} />)
         }

@@ -25,7 +25,7 @@ export class GuitarCard extends React.Component {
 
     componentWillUnmount() { 
         clearInterval(this.interval);
-    }
+    } 
 
     fetchUsersGuitars = () => {
         fetch(ApiGateway).then((res) => { 

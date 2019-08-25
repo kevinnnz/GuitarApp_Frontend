@@ -7,7 +7,8 @@ const initalState = {
     ServiceNotes: "",
     GuitarSetupDate: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
     TechError: "",
-    ServiceNotesError: ""
+    ServiceNotesError: "",
+    ServerErrors: ""
 };
 
 export default class ServiceForm extends React.Component {
@@ -78,17 +79,29 @@ export default class ServiceForm extends React.Component {
                 },
                 body: json,
             }).then(res => {
-                console.log(res);
+                if( res.status === 200) {
+                    window.location.replace('/')
+                } else {
+                    this.setState({
+                        ServerError : "Error: Something went wrong on the server end, please refresh and try again.."
+                    })
+                }
             });
-
-           // window.location.replace('/');
         }
     }
 
     render() {
         if( this.state.connectionError ) {
             return(<div></div> );
-        }        
+        }
+        
+        if( this.state.ServerError ) {
+            return( 
+                <div className="card">
+                    <h2 className="guitarTitle">{ this.state.ServerError }</h2>
+                </div>
+            )
+        }
 
         return (
             <div className="card">

@@ -22,8 +22,17 @@ const NoGuitarsFound = () => {
     );
 }
 
+const Success = () => {
+    return (
+        <div className="card">
+            <h2 className="guitarTitle">Success, redirecting home...</h2>
+        </div>
+    )
+}
+
 export {
     HasErrors,
     Loading,
-    NoGuitarsFound
+    NoGuitarsFound,
+    Success
 }

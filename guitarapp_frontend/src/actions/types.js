@@ -1,0 +1,4 @@
+export const FETCH_GUITARS = 'FETCH_GUITARS';
+export const NEW_GUITAR = "NEW_GUITAR";
+
+export const FETCH_SERVICE_RECORDS = 'FETCH_SERVICE_RECORDS';

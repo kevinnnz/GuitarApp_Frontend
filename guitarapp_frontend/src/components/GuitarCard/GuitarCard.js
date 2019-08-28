@@ -1,84 +1,24 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
-import { HasErrors, NoGuitarsFound, Loading } from '../Common/Common';
+import { HasErrors } from '../Common/Common';
+import { connect } from 'react-redux';
+import { fetchGuitars } from '../../actions/guitarAcions'
 
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-const ApiGateway = "https://dev.kevinzaworski.com/api/Guitars/dummyuser ";
 
 // 1.1 GUITAR CARD
 export class GuitarCard extends React.Component {
-    constructor() { 
-        super();
-        this.state = {
-            err: null,
-            loading: true,
-            guitars: []
-        };
-    }
-
     componentDidMount() {
-        this.fetchUsersGuitars();
-        this.interval = setInterval(this.fetchUsersGuitars, 30000);
-    }
-
-    componentWillUnmount() { 
-        clearInterval(this.interval);
-    } 
-
-    fetchUsersGuitars = () => {
-        fetch(ApiGateway).then((res) => { 
-            if(res.status === 200) {
-                return res.json();
-            } 
-
-            if( res.status === 404) {
-                return res.json();
-            }
-
-            throw new Error('Something went wrong. Please try again shortly.');
-         }).then((data) => {
-            this.setState({
-                guitars: data,
-                loading: false,
-            })
-        }).catch(err => {
-            this.setState({ 
-                err: err,
-                loading: false
-            });
-        });
+        // pass in the user name to this method
+        this.props.fetchGuitars("dummyuser");
     }
 
     render() {
-        while( this.state.loading ) {
-            return( <Loading /> );
-        }
-        
-        if( this.state.err ) {
-            if( this.state.err && this.state.guitars.length ){
-                return (
-                    <div>               
-                        { this.state.guitars.map(guitar => (
-                            <div className="card col-sm" key={guitar.Id}>
-                                <h2 className="guitarTitle"><Link to={`/guitar/${guitar.Id}`} guitar={guitar}> { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link></h2>
-                                <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
-                                <Playability GuitarId = { guitar.Id }/>
-                            </div>
-                        ))} 
-                    </div>
-                );
-            }
-            return( <div className="card"><HasErrors err = { this.state.err } /></div> );
-        }
-
-        if( !this.state.guitars[0].Id && !this.state.err ) {
-            return( <NoGuitarsFound /> );
-        }
-
         return (              
-            this.state.guitars.map(guitar => (
+            this.props.guitars.map(guitar => (
                 <div className="card col-sm-3" key={guitar.Id}>
                     <h2 className="guitarTitle"> <Link to={{ pathname: `/guitar/${guitar.Id}`, state : { guitar : guitar }}} > { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link> </h2> 
                     <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
@@ -298,5 +238,13 @@ export class Playability extends React.Component {
     }   
 }
 
+GuitarCard.propTypes = {
+    fetchGuitars: PropTypes.func.isRequired,
+    guitars: PropTypes.array.isRequired
+};
 
-export default GuitarCard;
+const mapStateToProps = state => ({
+    guitars: state.guitars.guitars
+});
+
+export default connect(mapStateToProps, { fetchGuitars })(GuitarCard);

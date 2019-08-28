@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "../store/store";
 
 import Navigation from "./Navigation/Navigation"
 
@@ -8,10 +10,11 @@ import GuitarForm from "./GuitarForm/GuitarForm";
 import GuitarDetails from "./GuitarDetails/GuitarDetails";
 import ServiceForm from "./ServiceForm/ServiceForm";
 
+
 export default class Layout extends React.Component {
     render() {
         return (
-            <div>
+            <Provider store={store}>
                 <Router>
                     <Navigation />
                     <div className="container-fluid"> 
@@ -21,7 +24,7 @@ export default class Layout extends React.Component {
                         <Route path="/service/:id" component={ServiceForm} />
                     </div>
                </Router>
-            </div>
+            </Provider>
         );
     }
 }

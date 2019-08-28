@@ -5,9 +5,10 @@ const initalState = {
     TechName: "",
     TechCompany: "",
     ServiceNotes: "",
-    GuitarSetupDate: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+    GuitarSetupDate: null,
     TechError: "",
     ServiceNotesError: "",
+    GuitarSetupDateError: "",
     ServerErrors: ""
 };
 
@@ -21,7 +22,8 @@ export default class ServiceForm extends React.Component {
             ServiceNotes: initalState.ServiceNotes,
             GuitarSetupDate: initalState.GuitarSetupDate,
             TechError: initalState.TechError,
-            ServiceNotesError: initalState.ServiceNotesError
+            ServiceNotesError: initalState.ServiceNotesError,
+            GuitarSetupDateError: initalState.GuitarSetupDateError
         };
     }
 
@@ -37,9 +39,21 @@ export default class ServiceForm extends React.Component {
         });
     }
 
+    changeTimeSignature(event) {
+        let date = moment(new Date(event.target.value)).format("YYYY-MM-DD HH:mm:ss");
+        this.setState({
+            [event.target.name] : date
+        });
+    }
+
     validateForm = () => {
         let TechError = "";
         let ServiceNotesError = "";
+        let GuitarSetupDateError = "";
+
+        if(!this.state.GuitarSetupDate) {
+            GuitarSetupDateError = "Setup date cannot be blank.";
+        }
 
         if(!this.state.TechName && !this.state.TechCompany) {
             TechError = "Tech name or tech company cannot be blank.";
@@ -50,7 +64,7 @@ export default class ServiceForm extends React.Component {
         }
 
         if(TechError) {
-            this.setState({TechError, ServiceNotesError});
+            this.setState({TechError, ServiceNotesError, GuitarSetupDateError});
             return false;
         }
 
@@ -107,8 +121,14 @@ export default class ServiceForm extends React.Component {
             <div className="card">
             <h2 className="center">Add new Service Record</h2> 
             <form onSubmit={this.handleSubmit}>
+                <div className="formError"><p>{this.state.GuitarSetupDateError}</p></div>
+                <input
+                    type = "date"
+                    name = "GuitarSetupDate"
+                    placeholder ={ this.state.GuitarSetupDate }
+                    onChange={ e=> this.changeTimeSignature(e) }
+                />
                 <div className="formError"><p>{this.state.TechError}</p></div>
-
                 <input 
                     name = "TechName"
                     placeholder="Tech Name" 

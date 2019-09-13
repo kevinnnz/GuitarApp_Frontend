@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes, { func } from 'prop-types';
 import { Link } from "react-router-dom";
 import { HasErrors } from '../Common/Common';
 import { connect } from 'react-redux';
@@ -17,52 +17,59 @@ export class GuitarCard extends React.Component {
     }
 
     render() {
-        return (              
+        return (         
             this.props.guitars.map(guitar => (
-                <div className="card col-sm-3" key={guitar.Id}>
-                    <h2 className="guitarTitle"> <Link to={{ pathname: `/guitar/${guitar.Id}`, state : { guitar : guitar }}} > { guitar.GuitarColour + ' ' + guitar.GuitarModel }  </Link> </h2> 
-                    <p className="guitarDetails">{ guitar.GuitarYear + ' ' + guitar.GuitarSerial }</p>
-                    <Playability GuitarId = { guitar.Id }/>
+                <div className="card col-sm-3" key={guitar._id}>
+                    <h2 className="guitarTitle"> <Link to={{ pathname: `/guitar/${guitar.Id}`, state : { guitar : guitar }}} > { guitar.guitarColour + ' ' + guitar.guitarModel }  </Link> </h2> 
+                    <p className="guitarDetails">{ guitar.guitarYear + ' ' + guitar.guitarSerial }</p>
+                    <Playability  servicerecords={guitar.serviceRecords}/>
                 </div>
-            ))
+            )) 
         );
     }
 }
 
 export class Playability extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            service: [],
-            loading: true,
-            err: null
+            sorted : false,
+            hasRecords : false,
+            firstRecord : 0
         }
-    } 
-
-    componentDidMount() {
-        this.fetchServiceRecords();
     }
 
-    fetchServiceRecords = () => {
-        fetch("https://dev.kevinzaworski.com/api/service/" + this.props.GuitarId + "/last").then((res) => {
-            if(res.status === 200) {
-                return res.json();
-            } else if(res.status === 404 ) {
-                return res.json();
-            }
-            throw new Error('Something went wrong. Please try again shortly.');
-        })
-        .then((data) => {
-            this.setState({ 
-                service: data,
-                loading: false
-            })
-        }).catch(err => {
-            this.setState({ 
-                err: err,
-                loading: false
-            });
-        });
+    componentDidMount() {
+        // sort the array
+        let records = this.props.servicerecords;
+        if(records.length) {
+            records.sort((a, b) =>  new Date(b.date) - new Date(a.date));
+            this.setState({sorted : true});
+            this.findFirstRecord();
+        }
+
+        // do nothing if the array is empty
+    }
+
+    findFirstRecord = () => {
+        let recordFound = false;
+
+        for (let i = 0; i < this.props.servicerecords.length; i++) {
+            const record = this.props.servicerecords[i];
+
+            if (record.workDone === "full setup" || record.workDone === "half setup") {
+                // we just need the first record
+                // only full setup, half setup effect playability
+                recordFound = true;
+                this.setState({ firstRecord : i });  
+                break;  
+            } 
+        }
+
+        if ( recordFound === true ) {
+            this.setState({ hasRecords: true });
+        } 
+        
     }
 
     returnGuitarProgressBar = (date) => {
@@ -191,50 +198,47 @@ export class Playability extends React.Component {
     }
 
     render() {
-        if( this.state.loading ){
-            return(<div></div>);
+        if ( this.state.sorted === true && this.state.hasRecords === true ) {
+            return(
+                <div style={{
+                    marginBottom: "15px"
+                }}>
+                    <h3 className="center">Playability</h3>
+                        { this.returnGuitarProgressBar(this.props.servicerecords[0].date) }
+                </div> 
+            );
         }
 
-        if( this.state.service === "Sorry, we cannot find that!" ) {
+        if ( this.state.hasRecords === false ) {
             return(
                 <div style={{
                     marginBottom: "15px"
                 }}>
                     <h3 className="center">Playability</h3>
                     <CircularProgressbar 
-                        counterClockwise="true"
-                        text="N/A"
-                        styles={{ 
-                            root: {
-                                width: "126px",
-                                height: "126px",
-                                display: "block",
-                                margin: "auto",
-                                bottom: "15px"
-                            },
-                            path: {
-                                stroke: "#D7D7D7"
-                            },
-                            text: {
-                                fill: "#D7D7D7"
-                            }
-                        }}
-                    />
-                </div>
-            )
-        } else if( this.state.err && !this.state.service[0]) {
-            return( <HasErrors err = {this.state.err} />)
+                    counterClockwise="true"
+                    value={ 0 } 
+                    text={`0%`}
+                    styles={{ 
+                        root: {
+                            width: "126px",
+                            height: "126px",
+                            display: "block",
+                            margin: "auto",
+                            bottom: "15px"
+                        },
+                        path: {
+                            stroke: "#E85A5A"
+                        },
+                        text: {
+                            fill: "#E85A5A"
+                        }
+                    }}
+                />
+                </div> 
+            );
         }
-
-        return(
-            <div style={{
-                marginBottom: "15px"
-            }}>
-                <h3 className="center">Playability</h3>
-                    { this.returnGuitarProgressBar(this.state.service.map(servicerecord => (
-                        servicerecord.GuitarSetupDate.split('T')[0]))) }
-            </div> 
-        );
+        
     }   
 }
 

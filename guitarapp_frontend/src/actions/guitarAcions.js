@@ -4,7 +4,7 @@ import {
 } from "./types";
 
 export const fetchGuitars = (user) => dispatch => {
-    fetch(`https://dev.kevinzaworski.com/api/Guitars/${user}`).then((res) => {
+    fetch(`https://dev.kevinzaworski.com/api/guitar/${user}`).then((res) => {
         if (res.status === 200) {
             return res.json();
         }

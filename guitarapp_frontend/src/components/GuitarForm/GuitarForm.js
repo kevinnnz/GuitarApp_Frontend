@@ -1,4 +1,15 @@
-import React from "react";
+import React, { Fragment } from "react";
+import { connect } from 'react-redux';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+import { DialogActions, FormHelperText } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+
+import AddIcon from '@material-ui/icons/Add';
+import Fab from '@material-ui/core/Fab';
 
 const initalState = {
     GuitarMake: "",
@@ -11,18 +22,36 @@ const initalState = {
     GuitarModelError: "",
     GuitarSerialError: "",
     GuitarColourError: "",
-    GuitarYearError: ""
+    GuitarYearError: "",
+    open: false
 };
 
-export default class GuitarForm extends React.Component {
+export class GuitarForm extends React.Component {
     constructor() {
         super();
         this.state = initalState;
     }
 
-    handleChange(event) {
+    handleChange = (event) => {
         this.setState({
             [event.target.name] : event.target.value
+        });
+    }
+
+    handleToggle = () => {
+        this.setState({
+            open: !this.state.open,
+            GuitarMake: "",
+            GuitarModel: "",
+            GuitarSerial: "",
+            GuitarColour: "",
+            GuitarYear: "",
+            GuitarOwnerId: "dummyuser",
+            GuitarMakeError: "",
+            GuitarModelError: "",
+            GuitarSerialError: "",
+            GuitarColourError: "",
+            GuitarYearError: ""
         });
     }
 
@@ -71,24 +100,28 @@ export default class GuitarForm extends React.Component {
                 "guitarModel" : this.state.GuitarModel,
                 "guitarSerial" : this.state.GuitarSerial,
                 "guitarColour" : this.state.GuitarColour,
-                "guitarOwnerId" : this.state.GuitarOwnerId,
-                "guitarYear" : this.state.GuitarYear
+                "guitarYear" : this.state.GuitarYear,
+                "owner" : this.state.GuitarOwnerId,
             }
+            
             var json = JSON.stringify(guitar);
-            console.log(json);
-            // do something..
-            fetch("https://dev.kevinzaworski.com/api/guitars/", {
+            console.log(localStorage.getItem('token'));
+            let url = `https://dev.kevinzaworski.com/api/guitar/${this.props.user.user._id}`;
+            console.log(url);
+
+            fetch(`https://dev.kevinzaworski.com/api/guitar/${this.props.user.user._id}`, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json',
+                    'auth-token' : 'Bearer ' + localStorage.getItem('token')
                 },
                 body: json,
             }).then(res => {
                 console.log(res);
             });
 
-            //window.location.replace('/');
+            window.location.replace('/');
         }
     }
 
@@ -98,47 +131,76 @@ export default class GuitarForm extends React.Component {
         }        
 
         return (
-            <div className="card">
-            <h2 className="center">Add new Guitar</h2> 
-            <form onSubmit={this.handleSubmit}>
-                <input 
-                    name = "GuitarMake"
-                    placeholder="Guitar Make" 
-                    value={this.state.GuitarMake} 
-                    onChange={e => this.handleChange(e) } 
-                />
-                <div className="formError"><p>{this.state.GuitarMakeError}</p></div>
-                <input 
-                    name = "GuitarModel"
-                    placeholder="Guitar Model" 
-                    value={this.state.GuitarModel} 
-                    onChange={e => this.handleChange(e) } 
-                />
-                <div className="formError"><p>{this.state.GuitarModelError}</p></div>
-                <input 
-                    name = "GuitarSerial"
-                    placeholder="Guitar Serial" 
-                    value={this.state.GuitarSerial} 
-                    onChange={e => this.handleChange(e) } 
-                />
-                <div className="formError"><p>{this.state.GuitarSerialError}</p></div>
-                <input 
-                    name = "GuitarColour"
-                    placeholder="Guitar Colour" 
-                    value={this.state.GuitarColour} 
-                    onChange={e => this.handleChange(e) } 
-                />
-                <div className="formError"><p>{this.state.GuitarColourError}</p></div>
-                <input 
-                    name = "GuitarYear"
-                    placeholder="Guitar Year" 
-                    value={this.state.GuitarYear} 
-                    onChange={e => this.handleChange(e) } 
-                />
-                <div className="formError"><p>{this.state.GuitarYearError}</p></div>
-                <button type="submit" className="centerButton"> Submit </button>
-            </form> 
-            </div> 
+            <Fragment>
+                <Fab color="secondary"  onClick={this.handleToggle}>
+                   <AddIcon />
+                </Fab>
+                <Dialog open={this.state.open} fullWidth={true}>
+                    <DialogContent>
+                        <DialogTitle>
+                            Add Gutiar
+                        </DialogTitle>
+                        <form>
+                            <TextField
+                                name = "GuitarMake"
+                                placeholder="Guitar Make" 
+                                value={this.state.GuitarMake} 
+                                onChange={e => this.handleChange(e) } 
+                                fullWidth={ true }
+                            />
+                            <FormHelperText>Example: Fender</FormHelperText>
+                            <div className="formError"><p>{this.state.GuitarMakeError}</p></div>
+                            <TextField 
+                                name = "GuitarModel"
+                                placeholder="Guitar Model" 
+                                value={this.state.GuitarModel} 
+                                onChange={e => this.handleChange(e) }
+                                fullWidth={ true }
+                            />
+                            <FormHelperText>Example: Jazzmaster</FormHelperText>
+                            <div className="formError"><p>{this.state.GuitarModelError}</p></div>
+                            <TextField 
+                                name = "GuitarSerial"
+                                placeholder="Guitar Serial" 
+                                value={this.state.GuitarSerial} 
+                                onChange={e => this.handleChange(e) }
+                                fullWidth={ true } 
+                            />
+                            <FormHelperText>Example: 0000001</FormHelperText>
+                            <div className="formError"><p>{this.state.GuitarSerialError}</p></div>
+                            <TextField 
+                                name = "GuitarColour"
+                                placeholder="Guitar Colour" 
+                                value={this.state.GuitarColour} 
+                                onChange={e => this.handleChange(e) }
+                                fullWidth={ true }
+                            />
+                            <FormHelperText>Example: Olympic White</FormHelperText>
+                            <div className="formError"><p>{this.state.GuitarColourError}</p></div>
+                            <TextField
+                                name = "GuitarYear"
+                                placeholder="Guitar Year" 
+                                value={this.state.GuitarYear} 
+                                onChange={e => this.handleChange(e) }
+                                fullWidth={ true } 
+                            />
+                            <FormHelperText>Example: 1992</FormHelperText>
+                            <div className="formError"><p>{this.state.GuitarYearError}</p></div>
+                            <DialogActions>
+                                <Button onClick={this.handleSubmit} color="primary">Submit</Button>
+                                <Button onClick={this.handleToggle} color="secondary">Cancel</Button>
+                            </DialogActions>
+                        </form>
+                    </DialogContent>
+                </Dialog> 
+            </Fragment>
         );
     }
 }
+
+
+const mapStateToProps  = state => ({ 
+    user : state.user
+});
+
+export default connect(mapStateToProps, {})(GuitarForm);

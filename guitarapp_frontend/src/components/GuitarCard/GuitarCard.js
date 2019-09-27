@@ -1,31 +1,77 @@
 import React from "react";
-import PropTypes, { func } from 'prop-types';
-import { Link } from "react-router-dom";
-import { HasErrors } from '../Common/Common';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { fetchGuitars } from '../../actions/guitarAcions'
+import { fetchGuitars } from '../../actions/guitarAcions';
+
+import Grid from '@material-ui/core/Grid';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+
+import ServiceForm from '../GuitarCard/Dialog/ServiceForm';
 
 
 // 1.1 GUITAR CARD
 export class GuitarCard extends React.Component {
     componentDidMount() {
         // pass in the user name to this method
-        this.props.fetchGuitars("dummyuser");
+        this.props.fetchGuitars(this.props.user.user._id);
     }
-
+    
     render() {
-        return (         
-            this.props.guitars.map(guitar => (
-                <div className="card col-sm-3" key={guitar._id}>
-                    <h2 className="guitarTitle"> <Link to={{ pathname: `/guitar/${guitar.Id}`, state : { guitar : guitar }}} > { guitar.guitarColour + ' ' + guitar.guitarModel }  </Link> </h2> 
-                    <p className="guitarDetails">{ guitar.guitarYear + ' ' + guitar.guitarSerial }</p>
-                    <Playability  servicerecords={guitar.serviceRecords}/>
+        if(!this.props.guitars) {
+            return(
+                <div className="card">
+                     <h2 className="guitarTitle">No Guitars Found..</h2>
                 </div>
-            )) 
-        );
+            )
+        }
+        
+        else {
+            return (
+                this.props.guitars.map(guitar => (
+                    <div className="card" key={guitar._id}>
+                        <Grid container direction="row" spacing={10}>
+                            <Grid item sm={7} md={8} lg={9}>
+                                <h2 className="guitarTitle">{ guitar.guitarColour + ' ' + guitar.guitarModel }</h2> 
+                                <p className="guitarDetails">{ guitar.guitarYear + ' ' + guitar.guitarSerial }</p>
+                                <ServiceForm id={guitar._id}/>
+                            </Grid>
+                            <Grid item sm={5} md={4} lg={3} >
+                                <Playability servicerecords={guitar.serviceRecords} />
+                            </Grid> 
+                        </Grid>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Date</TableCell>
+                                    <TableCell>Tech Name</TableCell>
+                                    <TableCell>Tech Company</TableCell>
+                                    <TableCell>Work Done</TableCell>
+                                    <TableCell>Notes</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                { guitar.serviceRecords.map(service => (
+                                    <TableRow key={ service.date }>
+                                        <TableCell>{ service.date }</TableCell>
+                                        <TableCell>{ service.techName }</TableCell>
+                                        <TableCell>{ service.techCompany }</TableCell>
+                                        <TableCell>{ service.workDone }</TableCell>
+                                        <TableCell>{ service.notes }</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                )) 
+            );
+        }
     }
 }
 
@@ -49,7 +95,7 @@ export class Playability extends React.Component {
         }
 
         // do nothing if the array is empty
-    }
+    }    
 
     findFirstRecord = () => {
         let recordFound = false;
@@ -57,7 +103,7 @@ export class Playability extends React.Component {
         for (let i = 0; i < this.props.servicerecords.length; i++) {
             const record = this.props.servicerecords[i];
 
-            if (record.workDone === "full setup" || record.workDone === "half setup") {
+            if (record.workDone.toLowerCase() === "full setup" || record.workDone.toLowerCase() === "half setup") {
                 // we just need the first record
                 // only full setup, half setup effect playability
                 recordFound = true;
@@ -244,11 +290,13 @@ export class Playability extends React.Component {
 
 GuitarCard.propTypes = {
     fetchGuitars: PropTypes.func.isRequired,
-    guitars: PropTypes.array.isRequired
+    guitars: PropTypes.array.isRequired,
+    user : PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    guitars: state.guitars.guitars
+    guitars: state.guitars.guitars,
+    user : state.user
 });
 
 export default connect(mapStateToProps, { fetchGuitars })(GuitarCard);

@@ -1,17 +1,25 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
 
-const Navigation = () => {
+import AppBar from '@material-ui/core/AppBar';
+import GuitarForm from '../../components/GuitarForm/GuitarForm';
+
+import Typography from '@material-ui/core/Typography';
+import Toolbar from '@material-ui/core/Toolbar';
+
+const style = {
+    marginBottom : "100px"
+};
+
+export default function Navigation() {
+    
     return(
-        <div className="header">
-            <nav className="navBar">
-                <ul className="navLinkList">
-                    <li className="navLink"><Link to="/">Guitars</Link></li>
-                    <li className="navLink"><Link to="/add/guitar">Add Guitar</Link></li>
-                </ul>
-            </nav>
-        </div> 
+        <div style={style}> 
+            <AppBar>
+                <Toolbar>
+                    <Typography variant="h5" style={{flex: 1}}>Guitar App</Typography>
+                    <GuitarForm/>
+                </Toolbar>
+            </AppBar>
+        </div>
     );
 }
-
-export default Navigation;

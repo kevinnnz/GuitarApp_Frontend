@@ -1,8 +1,7 @@
-import { FETCH_GUITARS, NEW_GUITAR } from '../actions/types'
+import { FETCH_GUITARS } from '../actions/types'
 
 const initialState = {
-    guitars: [], 
-    guitar: {}
+    guitars: []
 }
 
 export default function(state = initialState, action) {

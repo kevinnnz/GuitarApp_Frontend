@@ -1,10 +1,13 @@
 import {
     FETCH_GUITARS,
-    NEW_GUITAR
 } from "./types";
 
-export const fetchGuitars = (user) => dispatch => {
-    fetch(`https://dev.kevinzaworski.com/api/guitar/${user}`).then((res) => {
+export const fetchGuitars = (user, token) => dispatch => {
+    fetch(`https://dev.kevinzaworski.com/api/guitar/${user}`,{
+        headers: {
+            'auth-token' : token
+        }
+    }).then((res) => {
         if (res.status === 200) {
             return res.json();
         }

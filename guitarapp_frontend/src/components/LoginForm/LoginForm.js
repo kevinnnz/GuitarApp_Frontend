@@ -1,10 +1,7 @@
-import React from 'react';
-import PropTypes, { func } from 'prop-types';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import { login, setCurrentUser } from '../../actions/authActions';
-
-import jwt from 'jsonwebtoken';
-
+import { login } from '../../store/actions/authActions';
+import { Redirect } from 'react-router-dom';
 import { FormHelperText } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -19,11 +16,10 @@ const initalState = {
     emailErrorBool: false,
     password: "",
     passwordError: "",
-    passwordErrorBool: false
+    passwordErrorBool: false,
 }
 
 export class LoginForm extends React.Component {
-
     constructor() {
         super();
         this.state = initalState;
@@ -63,78 +59,76 @@ export class LoginForm extends React.Component {
 
     handleSubmit = async (event) => {
         event.preventDefault();
-        const isValid = this.validateForm();   
+        const isValid = this.validateForm();  
 
         if(isValid) {
-            let user = {
-                "username" : this.state.username,
-                "email" : this.state.email,
-                "password" : this.state.password
-            }
-
-            var json = JSON.stringify(user);
-            
-            try {
-                this.props.login(json);  
-            } catch(err) {
-                console.log(err);
-            } finally {
-                window.location.replace('/');
-            }
+            this.props.login(this.state.email, this.state.password);
         }
     }
     
     render() {
+        const { auth } = this.props;
+        if(auth.uid) {
+            return <Redirect to='/' />
+        }
+
         return(
-            <div className="card" >
-                <h1>Login</h1> 
-                <form>
-                    <TextField
-                        name = "email"
-                        placeholder="Email"
-                        type="email"
-                        value={this.state.email}
-                        error={ this.state.emailErrorBool } 
-                        onChange={e => this.handleChange(e) } 
-                        fullWidth={ true }
-                    />
-                    <FormHelperText error={ this.state.emailErrorBool }>
-                        { this.state.emailError }
-                    </FormHelperText>
-                    <br />
-                    <TextField
-                        name = "password"
-                        placeholder="password" 
-                        type="password"
-                        value={this.state.password}
-                        error={ this.state.passwordErrorBool }
-                        onChange={e => this.handleChange(e) } 
-                        fullWidth={ true }
-                    />
-                    <FormHelperText error={ this.state.passwordErrorBool }>
-                        { this.state.passwordError }
-                    </FormHelperText>
-                    <br />
-                    <br />
-                    <Grid container spacing={10} alignItems="baseline" justify="space-between" direction="row">
-                        <Grid item md={8}>
-                            <Typography><Link to="/signup">Sign up instead</Link></Typography>
+                <div className="card" >
+                    <h1>Login</h1> 
+                    <form>
+                        <TextField
+                            name = "email"
+                            placeholder="Email"
+                            type="email"
+                            value={this.state.email}
+                            error={ this.state.emailErrorBool } 
+                            onChange={e => this.handleChange(e) } 
+                            fullWidth={ true }
+                        />
+                        <FormHelperText error={ this.state.emailErrorBool }>
+                            { this.state.emailError }
+                        </FormHelperText>
+                        <br />
+                        <TextField
+                            name = "password"
+                            placeholder="password" 
+                            type="password"
+                            value={this.state.password}
+                            error={ this.state.passwordErrorBool }
+                            onChange={e => this.handleChange(e) } 
+                            fullWidth={ true }
+                        />
+                        <FormHelperText error={ this.state.passwordErrorBool }>
+                            { this.state.passwordError }
+                        </FormHelperText>
+                        <br />
+                        <br />
+                        <Grid container spacing={10} alignItems="baseline" justify="space-between" direction="row">
+                            <Grid item md={8}>
+                                <Typography><Link to="/signup">Sign up instead</Link></Typography>
+                            </Grid>
+                            <Grid item md={4}>
+                                <Button fullWidth={true} color="primary" variant="contained" onClick={this.handleSubmit}>Login</Button>
+                            </Grid>
                         </Grid>
-                        <Grid item md={4}>
-                            <Button fullWidth={true} color="primary" variant="contained" onClick={this.handleSubmit}>Login</Button>
-                        </Grid>
-                    </Grid>
-                    <br />
-                    <br />
-                </form>
-            </div>
+                        <br />
+                        <br />
+                    </form>
+                </div>
         );
     }
 }
 
-LoginForm.propTypes = {
-    login: PropTypes.func.isRequired,
-    setCurrentUser: PropTypes.func.isRequired
+const mapStateToProps = (state) => {
+    return {
+        auth: state.firebase.auth
+    }
 }
 
-export default connect(null, { login, setCurrentUser })(LoginForm);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        login : (email, password) => dispatch(login(email, password))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

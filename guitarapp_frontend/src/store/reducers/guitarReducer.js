@@ -1,4 +1,4 @@
-import { FETCH_GUITARS } from '../actions/types'
+import { FETCH_GUITARS } from '../actions/actionTypes'
 
 const initialState = {
     guitars: []

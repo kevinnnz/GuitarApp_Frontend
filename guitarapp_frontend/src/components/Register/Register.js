@@ -1,8 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { setCurrentUser } from '../../actions/authActions';
-
+import { signup } from '../../store/actions/authActions';
 import { FormHelperText, Typography } from '@material-ui/core';
 
 import TextField from '@material-ui/core/TextField';
@@ -46,16 +44,10 @@ export class Register extends React.Component {
     
     
     validateForm = () => {
-        let nameError = "";
         let emailError = "";
         let passwordMatchError = "";
         let passwordLengthError = "";
         
-        if(!this.state.name) {
-            nameError = "Name is required. ";
-            this.setState({ nameErrorBool : true });
-        }
-
         if(!this.state.email) {
             emailError = "Email is required. ";
             this.setState({ emailErrorBool : true });
@@ -74,9 +66,8 @@ export class Register extends React.Component {
         }
 
         
-        if(nameError || emailError || passwordMatchError || passwordLengthError ) {
+        if(emailError || passwordMatchError || passwordLengthError ) {
             this.setState({ 
-                nameError,
                 emailError,
                 passwordMatchError,
                 passwordLengthError
@@ -87,28 +78,12 @@ export class Register extends React.Component {
         return true;
     }
 
-    handleSubmit = (event) => {
+    handleSignup = (event) => {
         event.preventDefault();
         const isValid = this.validateForm();   
 
         if(isValid) {
-            let user = {
-                "username" : this.state.username,
-                "email" : this.state.email,
-                "password" : this.state.password
-            }
-
-            var json = JSON.stringify(user);
-
-            fetch('https://dev.kevinzaworski.com/api/user/register', {
-                method: 'POST',
-                body: json,
-                headers: {
-                    'Content-Type' : 'application/json'
-                }
-            }).then(res => {
-                    window.location.replace('/login');
-            });
+            this.props.signup(this.state.email, this.state.password);
         }
     }
     
@@ -118,19 +93,6 @@ export class Register extends React.Component {
                 <h1>Register</h1> 
                 
                 <form>
-                    <TextField
-                        name = "name"
-                        required={true}
-                        placeholder="Name" 
-                        value={this.state.name} 
-                        error={ this.state.nameErrorBool }
-                        onChange={e => this.handleChange(e) } 
-                        fullWidth={ true }
-                    />
-                    <FormHelperText error={ this.state.nameErrorBool }>
-                        {this.state.nameError } Example: John Smith
-                    </FormHelperText>
-                    <br />
                     <TextField
                         name = "email"
                         placeholder="Email"
@@ -173,7 +135,7 @@ export class Register extends React.Component {
                             <Typography><Link to="/login" >Sign in instead</Link></Typography>
                         </Grid>
                         <Grid item md={4}>
-                            <Button fullWidth={true} color="primary" variant="contained" onClick={this.handleSubmit} >Register</Button>
+                            <Button fullWidth={true} color="primary" variant="contained" onClick={this.handleSignup} >Register</Button>
                         </Grid>
                     </Grid>
                     <br />
@@ -184,8 +146,17 @@ export class Register extends React.Component {
     }
 }
 
-Register.propTypes = {
-    setCurrentUser: PropTypes.func.isRequired
+const mapStateToProps = (state) => {
+    return {
+        auth: state.firebase.auth
+    }
 }
 
-export default connect(null, { setCurrentUser })(Register);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        signup : (email, password) => dispatch(signup(email, password))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { fetchGuitars } from '../../actions/guitarAcions';
+import { fetchGuitars } from '../../store/actions/guitarAcions';
 
 import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
@@ -9,6 +9,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Card from '@material-ui/core/Card'
 
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -20,19 +21,18 @@ import ServiceForm from '../GuitarCard/Dialog/ServiceForm';
 export class GuitarCard extends React.Component {
     componentDidMount() {
         // pass in the user name to this method
-        this.props.fetchGuitars(this.props.user.user._id);
+        this.props.fetchGuitars(this.props.auth.uid, this.props.auth.stsTokenManager.accessToken);
     }
     
     render() {
-        if(!this.props.guitars) {
+        if(this.props.guitars.length === 0) {
             return(
                 <div className="card">
-                     <h2 className="guitarTitle">No Guitars Found..</h2>
+                     <h2 className="guitarTitle">No Guitars Found</h2>
+                     <p>Please add guitar to your collection...</p>
                 </div>
             )
-        }
-        
-        else {
+        } else {
             return (
                 this.props.guitars.map(guitar => (
                     <div className="card" key={guitar._id}>
@@ -45,6 +45,11 @@ export class GuitarCard extends React.Component {
                             <Grid item sm={5} md={4} lg={3} >
                                 <Playability servicerecords={guitar.serviceRecords} />
                             </Grid> 
+                        </Grid>
+                        <Grid container direction="row" spacing={1}>
+                            <Grid item sm={7} md={8} lg={9}>
+                                <h3>Service Records</h3> 
+                            </Grid>
                         </Grid>
                         <Table>
                             <TableHead>
@@ -291,12 +296,11 @@ export class Playability extends React.Component {
 GuitarCard.propTypes = {
     fetchGuitars: PropTypes.func.isRequired,
     guitars: PropTypes.array.isRequired,
-    user : PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
     guitars: state.guitars.guitars,
-    user : state.user
+    auth: state.firebase.auth
 });
 
 export default connect(mapStateToProps, { fetchGuitars })(GuitarCard);

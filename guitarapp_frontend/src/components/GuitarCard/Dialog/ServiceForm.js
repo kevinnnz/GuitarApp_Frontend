@@ -102,12 +102,12 @@ export class ServiceForm extends React.Component {
             }
             var json = JSON.stringify(serviceRecord);
             // do something..
-            fetch(`https://dev.kevinzaworski.com/api/service/${this.props.user.user._id}`, {
+            fetch(`https://dev.kevinzaworski.com/api/service/${this.props.auth.uid}`, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json',
-                    'auth-token' : localStorage.getItem('token')
+                    'Authorization' : 'Bearer ' + this.props.auth.stsTokenManager.accessToken
                 },
                 body: json,
             }).then(res => {
@@ -235,7 +235,7 @@ export class ServiceForm extends React.Component {
 
 
 const mapStateToProps  = state => ({ 
-    user : state.user
+    auth : state.firebase.auth
 });
 
 export default connect(mapStateToProps, {})(ServiceForm);

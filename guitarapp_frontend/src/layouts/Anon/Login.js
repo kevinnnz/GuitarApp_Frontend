@@ -2,7 +2,7 @@ import React from 'react';
 
 import Navigation from '../../components/Navigation/Navigation'
 import Container from "@material-ui/core/Container"
-import Register from '../../components/Register/Register';
+import LoginForm from '../../components/LoginForm/LoginForm';
 
 export default class Signup extends React.Component {
     render() {
@@ -10,7 +10,7 @@ export default class Signup extends React.Component {
             <>
                 <Navigation />
                 <Container maxWidth="md">
-                    <Register />
+                    <LoginForm />
                 </Container>
             </>
         );

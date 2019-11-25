@@ -1,15 +1,17 @@
-import { createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
-import rootReducer from "../reducers/index"
+import rootReducer from "./reducers/index";
 
+const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+
+//const createStoreWithFirebase = compose(firebaseReducer(firebase))(createStore);
 const initalState = {};
-
-const middleware = [thunk];
 
 const store = createStore(
     rootReducer,
-    initalState,
-    applyMiddleware(...middleware)
+    composeEnhancers(
+        applyMiddleware(thunk)
+    )
 );
 
 export default store;

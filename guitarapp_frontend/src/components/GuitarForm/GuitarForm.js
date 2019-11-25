@@ -17,7 +17,7 @@ const initalState = {
     GuitarSerial: "",
     GuitarColour: "",
     GuitarYear: "",
-    GuitarOwnerId: "dummyuser",
+    GuitarOwnerId: "",
     GuitarMakeError: "",
     GuitarModelError: "",
     GuitarSerialError: "",
@@ -46,7 +46,7 @@ export class GuitarForm extends React.Component {
             GuitarSerial: "",
             GuitarColour: "",
             GuitarYear: "",
-            GuitarOwnerId: "dummyuser",
+            GuitarOwnerId: "",
             GuitarMakeError: "",
             GuitarModelError: "",
             GuitarSerialError: "",
@@ -105,23 +105,19 @@ export class GuitarForm extends React.Component {
             }
             
             var json = JSON.stringify(guitar);
-            console.log(localStorage.getItem('token'));
-            let url = `https://dev.kevinzaworski.com/api/guitar/${this.props.user.user._id}`;
-            console.log(url);
-
-            fetch(`https://dev.kevinzaworski.com/api/guitar/${this.props.user.user._id}`, {
+            fetch(`https://dev.kevinzaworski.com/api/guitar/${this.props.auth.uid}`, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json',
-                    'auth-token' : 'Bearer ' + localStorage.getItem('token')
+                    'Authorization' : 'Bearer ' + this.props.auth.stsTokenManager.accessToken
                 },
                 body: json,
             }).then(res => {
                 console.log(res);
             });
 
-            window.location.replace('/');
+            //window.location.replace('/');
         }
     }
 
@@ -200,7 +196,7 @@ export class GuitarForm extends React.Component {
 
 
 const mapStateToProps  = state => ({ 
-    user : state.user
+    auth : state.firebase.auth
 });
 
 export default connect(mapStateToProps, {})(GuitarForm);

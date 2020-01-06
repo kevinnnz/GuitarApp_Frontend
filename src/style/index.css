@@ -1,0 +1,109 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #E9EBEE;
+    color: #4A4A4A;
+}
+
+.centerButton {
+    display: flex; 
+    justify-content: center
+}
+
+.formError {
+    font-weight: 400;
+    color: #CE6767;
+}
+
+.guitarTitle {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 28px;
+    color: #284DD3; 
+}
+
+.guitarDetails {
+    margin-top: -15px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 21px;
+    /* identical to box height */
+    color: #474747;
+}
+
+.sectionHeading { 
+    text-align: center;
+}
+
+.playability {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.green {
+    color: #89C87A;
+}
+
+.yellow {
+    color: #DDD407;
+}
+
+.red {
+    color: #CE6767;
+}
+
+.center {
+    text-align: center;
+}
+
+
+.header {
+    background-color: white;
+    height: 100%;
+}
+
+.navLink {
+    font-size: 24px;
+    line-height: 75px;
+    width: 71px;
+    margin: 15px;
+    height: 75px;
+    color: white;
+}
+
+.navLink a:visited {
+    color: white;
+}
+
+.navLink a {
+    color: white;
+}
+
+.navLinkList li {
+    display: inline;
+}
+
+.serviceHistory {
+    background: rgba(40, 77, 211, 0);
+    border: 1px solid #DFE1E5;
+    margin-bottom: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px; 
+    padding-bottom: 5px;
+}
+
+.break {
+    width: 100%;
+    border: 1px solid #DFE1E5;
+}
+
+.error {
+    background-color: #d32f2f;
+}

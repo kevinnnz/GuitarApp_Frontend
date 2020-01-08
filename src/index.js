@@ -11,7 +11,6 @@ import Main from './layouts/Main';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style/index.css';
 
-
 const rrfProps = {
     firebase,
     config: {},

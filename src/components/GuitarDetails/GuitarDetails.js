@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { fetchGuitar } from '../../store/actions/guitarAcions';
 
 import ServiceForm from '../ServiceForm/ServiceForm';
+import Playability from '../Playability/Playability';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -35,7 +36,6 @@ class GuitarDetails extends React.Component {
     }
 
     render() {
-
         return(
             <Container>
                  <Row>
@@ -45,9 +45,9 @@ class GuitarDetails extends React.Component {
                                 marginTop: 25
                             }}
                         >
-                            { this.props.guitar.map(guitar => (
-                            <Card.Body key={guitar._id}>
-                                    <Row>
+                            { this.props.guitar.map((guitar, i )=> (
+                            <Card.Body>
+                                    <Row key={i}>
                                         <Col lg={8}>
                                             <h2 className="text-capitalize">{ guitar.guitarColour + ' ' + guitar.guitarModel }</h2>
                                             <p>{ guitar.guitarYear + ' ' + guitar.guitarSerial }</p>
@@ -76,6 +76,9 @@ class GuitarDetails extends React.Component {
                         }}>
                             <Card.Body>
                                 <h2>Playability</h2>
+                                { this.props.guitar.map(guitar => (
+                                    <Playability servicerecords={guitar.serviceRecords} />
+                                ))}
                             </Card.Body>
                         </Card>
                     </Col>

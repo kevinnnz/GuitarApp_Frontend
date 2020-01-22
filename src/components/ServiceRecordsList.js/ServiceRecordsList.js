@@ -2,8 +2,6 @@ import React from 'react';
 import Table from 'react-bootstrap/Table';
 import Alert from 'react-bootstrap/Alert';
 
-import ServiceForm from '../ServiceForm/ServiceForm';
-
 class ServiceRecordList extends React.Component {
 
     constructor(props) {
@@ -35,6 +33,7 @@ class ServiceRecordList extends React.Component {
                 </Alert>
             )
         }
+
         return(
             <>
             <Table>
@@ -47,8 +46,8 @@ class ServiceRecordList extends React.Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.props.serviceRecords.map(service => (
-                        <tr key='1'>
+                    {this.props.serviceRecords.map((service, i) => (
+                        <tr key={i}>
                             <td>
                                 { service.date }
                             </td>
